@@ -1,0 +1,5 @@
+[
+  { "symbol": "H", "name": "Hydrogen", "atomic_mass": 1.008 },
+  { "symbol": "He", "name": "Helium", "atomic_mass": 4.0026 },
+  { "symbol": "Li", "name": "Lithium", "atomic_mass": 6.94 }
+]

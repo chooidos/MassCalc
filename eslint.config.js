@@ -16,7 +16,6 @@ export default [
     },
     rules: {
       "import/no-unresolved": "off",
-      // Additional rules (e.g., import sorting)
       "import/order": [
         "error",
         {
