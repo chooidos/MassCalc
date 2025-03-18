@@ -1,6 +1,9 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { fetchElements } from "../async-layer";
-import { ElementCh } from "../types/elements";
+import { fetchElements } from '../async-layer';
+import { ElementCh } from '../types/elements';
 
-export const getElements = createAsyncThunk<ElementCh[]>('elements/getElements', fetchElements);
+export const getElements = createAsyncThunk<ElementCh[]>(
+  'elements/getElements',
+  fetchElements,
+);

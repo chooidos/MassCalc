@@ -1,21 +1,45 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice, current } from '@reduxjs/toolkit';
 
-import { getElements } from "./actions";
-import { ElementCh, SelectedElement } from "../types/elements";
+import { getElements } from './actions';
+import { ElementCh, SelectedElement } from '../types/elements';
 
 export type ElementsState = {
   list: ElementCh[];
   selected: SelectedElement[];
-  error: string | undefined;
-}
+  error?: string | undefined;
+};
 
 export const elementsSlise = createSlice({
   name: 'elementsSlice',
-  initialState: {} as ElementsState,
+  initialState: {
+    list: [],
+    selected: [
+      {
+        idx: 1,
+      },
+      {
+        idx: 2,
+      },
+      {
+        idx: 3,
+      },
+      {
+        idx: 4,
+      },
+      {
+        idx: 5,
+      },
+      {
+        idx: 6,
+      },
+    ],
+  } as ElementsState,
   reducers: {
     updateSelectedElement: (state, action) => {
       if (state.selected?.length) {
-        const index = state.selected.findIndex(el => el.idx === action.payload.idx);
+        const index = state.selected.findIndex(
+          (el) => el.idx === action.payload.idx,
+        );
 
         if (index !== -1) {
           state.selected[index] = action.payload;
@@ -28,7 +52,9 @@ export const elementsSlise = createSlice({
     },
     updateCountSelectedElement: (state, action) => {
       if (state.selected?.length) {
-        const index = state.selected.findIndex(el => el.idx === action.payload.idx);
+        const index = state.selected.findIndex(
+          (el) => el.idx === action.payload.idx,
+        );
 
         if (index !== -1) {
           state.selected[index].number = action.payload.number;
@@ -37,18 +63,14 @@ export const elementsSlise = createSlice({
     },
     deb: (state) => {
       console.log(current(state));
-    }
+    },
   },
   extraReducers(builder) {
-    builder
-      .addCase(
-        getElements.fulfilled,
-        (state, action) => {
-          state.list = action.payload;
-        }
-      )
+    builder.addCase(getElements.fulfilled, (state, action) => {
+      state.list = action.payload;
+    });
   },
-})
+});
 
-export const { selectElement } = elementsSlise.actions;
+export const { updateSelectedElement } = elementsSlise.actions;
 export default elementsSlise.reducer;
