@@ -1,6 +1,3 @@
-// import { useState } from "react";
-// import { invoke } from "@tauri-apps/api/core";
-
 import {
   Button,
   Container,
@@ -19,26 +16,38 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import './App.css';
-
-const elements = [
-  {
-    symbol: '',
-    name: null,
-    atomic_mass: null,
-  },
-]
+import { actions, elementsSlise, selectors } from './modules/elements/store';
+import { SelectedElement } from './modules/elements/types/elements';
+import { AppDispatch } from './store';
 
 function App() {
-  const [elements, setElements] = useState({ 1: {} });
-  // const [name, setName] = useState("");
+  const dispatch: AppDispatch = useDispatch();
 
-  // async function greet() {
-  //   // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  //   setGreetMsg(await invoke("greet", { name }));
-  // }
+  const [seletedElements, setSelectedElements] = useState<SelectedElement[]>([
+    {
+      idx: 1,
+    },
+    {
+      idx: 2,
+    },
+    {
+      idx: 3,
+    },
+    {
+      idx: 4,
+    },
+    {
+      idx: 5,
+    },
+    {
+      idx: 6,
+    },
+  ]);
+
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const theme = useMemo(
     () =>
@@ -50,6 +59,28 @@ function App() {
     [prefersDarkMode],
   );
 
+  const elementsList = useSelector(selectors.selectElements);
+  const elemenselectedElements = useSelector(selectors.selectSelectedElements);
+
+  useEffect(() => {
+    dispatch(actions.getElements());
+  }, []);
+  useEffect(() => {
+    console.log(elemenselectedElements);
+  }, [elemenselectedElements])
+
+
+
+  const handleElementInput = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, idx: number) => {
+    const element = elementsList?.find(el => el.symbol === event.target.value);
+    if (element) {
+      dispatch(elementsSlise.actions.updateSelectedElement({ ...element, idx, number: 0 }));
+    }
+  };
+
+  const handleElementCountInput = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, idx: number) => {
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -57,9 +88,9 @@ function App() {
         <Grid2 size={2} display="flex" justifyContent="center" alignItems="center">
           <Typography variant='body1'>Elements</Typography>
         </Grid2>
-        {[1, 2, 3, 4, 5, 6].map(el => (
-          <Grid2 key={el} size="grow">
-            <TextField id="standard-basic" variant="outlined" size='small' />
+        {seletedElements.map(el => (
+          <Grid2 key={el.idx} size="grow">
+            <TextField id="standard-basic" variant="outlined" size='small' onChange={event => handleElementInput(event, el.idx)} />
           </Grid2>
         ))}
       </Grid2>
@@ -67,9 +98,9 @@ function App() {
         <Grid2 size={2} display="flex" justifyContent="center" alignItems="center">
           <Typography variant='body1' >Atom numbers</Typography>
         </Grid2>
-        {[1, 2, 3, 4, 5, 6].map(el => (
-          <Grid2 key={el} size="grow">
-            <TextField id="standard-basic" variant="outlined" size='small' />
+        {seletedElements.map(el => (
+          <Grid2 key={el.idx} size="grow">
+            <TextField id="standard-basic" variant="outlined" size='small' onChange={event => handleElementCountInput(event, el.idx)} />
           </Grid2>
         ))}
       </Grid2>
@@ -77,8 +108,8 @@ function App() {
         <Grid2 size={2} display="flex" justifyContent="center" alignItems="center">
           <Typography variant='body1' >Atom weight</Typography>
         </Grid2>
-        {[1, 2, 3, 4, 5, 6].map(el => (
-          <Grid2 key={el} size="grow">
+        {seletedElements.map(el => (
+          <Grid2 key={el.idx} size="grow">
             <TextField id="standard-basic" variant="outlined" size='small' />
           </Grid2>
         ))}
