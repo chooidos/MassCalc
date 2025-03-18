@@ -20,7 +20,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import './App.css';
-import { actions, elementsSlise, selectors } from './modules/elements/store';
+import { actions, selectors } from './modules/elements/store';
 import { AppDispatch } from './store';
 
 function App() {
@@ -56,7 +56,7 @@ function App() {
     );
     if (element) {
       dispatch(
-        elementsSlise.actions.updateSelectedElement({
+        actions.updateSelectedElement({
           ...element,
           idx,
           number: 0,
@@ -70,12 +70,10 @@ function App() {
     idx: number,
   ) => {
     const element = selectedElements?.find((el) => el.idx === idx);
-    console.log(element);
 
     if (element) {
-      // dispatch()
       dispatch(
-        elementsSlise.actions.updateCountSelectedElement({
+        actions.updateCountSelectedElement({
           ...element,
           number: parseInt(event.target.value),
         }),

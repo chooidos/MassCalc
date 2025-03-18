@@ -72,5 +72,4 @@ export const elementsSlise = createSlice({
   },
 });
 
-export const { updateSelectedElement } = elementsSlise.actions;
 export default elementsSlise.reducer;
