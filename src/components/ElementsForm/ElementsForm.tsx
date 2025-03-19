@@ -17,54 +17,30 @@ const ElementsForm = () => {
     dispatch(actions.deb());
   }, [selectedElements]);
 
-  const handleElementInput = (
+  const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     idx: number,
+    field: 'symbol' | 'number' | 'atomic_mass',
   ) => {
     const { value } = event.target;
-    const element = elementsList?.find((el) => el.symbol === value);
+
+    let element = selectedElements.find((el) => el.idx === idx);
+
+    if (field === 'symbol') {
+      const foundElement = elementsList.find((el) => el.symbol === value);
+      if (foundElement) {
+        element = { ...foundElement, idx, number: 0 };
+      } else {
+        element = { idx, symbol: value, atomic_mass: 0, number: 0 };
+      }
+    }
 
     dispatch(
       actions.updateSelectedElement({
         ...element,
-        idx,
-        symbol: element?.symbol ?? value,
-        atomic_mass: element?.atomic_mass ?? 0,
-        number: 0,
+        [field]: value,
       }),
     );
-  };
-
-  const handleElementCountInput = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    idx: number,
-  ) => {
-    const element = selectedElements?.find((el) => el.idx === idx);
-
-    if (element) {
-      dispatch(
-        actions.updateSelectedElement({
-          ...element,
-          number: event.target.value,
-        }),
-      );
-    }
-  };
-
-  const handleElementWeightInput = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    idx: number,
-  ) => {
-    const element = selectedElements?.find((el) => el.idx === idx);
-
-    if (element) {
-      dispatch(
-        actions.updateSelectedElement({
-          ...element,
-          atomic_mass: event.target.value,
-        }),
-      );
-    }
   };
 
   const handleSampleWeightInput = (
@@ -78,19 +54,19 @@ const ElementsForm = () => {
         label="Elements"
         values={selectedElements}
         type={'symbol'}
-        onChange={handleElementInput}
+        onChange={(event, idx) => handleInputChange(event, idx, 'symbol')}
       />
       <InputRow
         label="Atom numbers"
         values={selectedElements}
         type={'number'}
-        onChange={handleElementCountInput}
+        onChange={(event, idx) => handleInputChange(event, idx, 'number')}
       />
       <InputRow
         label="Atom weight"
         values={selectedElements}
         type={'atomic_mass'}
-        onChange={handleElementWeightInput}
+        onChange={(event, idx) => handleInputChange(event, idx, 'atomic_mass')}
       />
       <Grid2 container spacing={2} padding={2}>
         <Grid2
