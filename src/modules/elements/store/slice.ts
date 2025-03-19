@@ -6,22 +6,26 @@ import { ElementCh, SelectedElement } from '../types/elements';
 export type ElementsState = {
   list: ElementCh[];
   selected: SelectedElement[];
+  sampleWeight?: string;
   error?: string | undefined;
+};
+
+const initialState: ElementsState = {
+  list: [],
+  selected: [
+    { idx: 1, symbol: '', atomic_mass: '', number: '' },
+    { idx: 2, symbol: '', atomic_mass: '', number: '' },
+    { idx: 3, symbol: '', atomic_mass: '', number: '' },
+    { idx: 4, symbol: '', atomic_mass: '', number: '' },
+    { idx: 5, symbol: '', atomic_mass: '', number: '' },
+    { idx: 6, symbol: '', atomic_mass: '', number: '' },
+  ],
+  sampleWeight: '',
 };
 
 export const elementsSlice = createSlice({
   name: 'elementsSlice',
-  initialState: {
-    list: [],
-    selected: [
-      { idx: 1 },
-      { idx: 2 },
-      { idx: 3 },
-      { idx: 4 },
-      { idx: 5 },
-      { idx: 6 },
-    ],
-  } as ElementsState,
+  initialState: initialState,
   reducers: {
     updateSelectedElement: (state, action) => {
       const index = state.selected.findIndex(
@@ -34,14 +38,8 @@ export const elementsSlice = createSlice({
         state.selected.push(action.payload);
       }
     },
-    updateCountSelectedElement: (state, action) => {
-      const index = state.selected.findIndex(
-        (el) => el.idx === action.payload.idx,
-      );
-
-      if (index !== -1) {
-        state.selected[index].number = action.payload.number;
-      }
+    updateSampleWeight: (state, action) => {
+      state.sampleWeight = action.payload;
     },
     deb: (state) => {
       console.log(current(state));
