@@ -9,56 +9,38 @@ export type ElementsState = {
   error?: string | undefined;
 };
 
-export const elementsSlise = createSlice({
+export const elementsSlice = createSlice({
   name: 'elementsSlice',
   initialState: {
     list: [],
     selected: [
-      {
-        idx: 1,
-      },
-      {
-        idx: 2,
-      },
-      {
-        idx: 3,
-      },
-      {
-        idx: 4,
-      },
-      {
-        idx: 5,
-      },
-      {
-        idx: 6,
-      },
+      { idx: 1 },
+      { idx: 2 },
+      { idx: 3 },
+      { idx: 4 },
+      { idx: 5 },
+      { idx: 6 },
     ],
   } as ElementsState,
   reducers: {
     updateSelectedElement: (state, action) => {
-      if (state.selected?.length) {
-        const index = state.selected.findIndex(
-          (el) => el.idx === action.payload.idx,
-        );
+      const index = state.selected.findIndex(
+        (el) => el.idx === action.payload.idx,
+      );
 
-        if (index !== -1) {
-          state.selected[index] = action.payload;
-        } else {
-          state.selected.push(action.payload);
-        }
+      if (index !== -1) {
+        state.selected[index] = action.payload;
       } else {
-        state.selected = [action.payload];
+        state.selected.push(action.payload);
       }
     },
     updateCountSelectedElement: (state, action) => {
-      if (state.selected?.length) {
-        const index = state.selected.findIndex(
-          (el) => el.idx === action.payload.idx,
-        );
+      const index = state.selected.findIndex(
+        (el) => el.idx === action.payload.idx,
+      );
 
-        if (index !== -1) {
-          state.selected[index].number = action.payload.number;
-        }
+      if (index !== -1) {
+        state.selected[index].number = action.payload.number;
       }
     },
     deb: (state) => {
@@ -72,4 +54,4 @@ export const elementsSlise = createSlice({
   },
 });
 
-export default elementsSlise.reducer;
+export default elementsSlice.reducer;
