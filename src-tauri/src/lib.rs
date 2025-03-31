@@ -117,6 +117,10 @@ fn parse_f64(value: &serde_json::Value) -> f64 {
     }
 }
 
+fn round5(value: f64) -> f64 {
+    (value * 100000.0).round() / 100000.0
+}
+
 #[command]
 fn calculate(input: CalculationInput) -> Vec<CalculationResult> {
     let sample_weight = parse_f64(&input.sample_weight);
@@ -144,7 +148,7 @@ fn calculate(input: CalculationInput) -> Vec<CalculationResult> {
         .iter()
         .map(|(symbol, atomic_mass, number)| CalculationResult {
             element: symbol.clone(),
-            mass: (atomic_mass * *number as f64 / total_mass) * sample_weight,
+            mass: round5((atomic_mass * *number as f64 / total_mass) * sample_weight),
         })
         .collect()
 }

@@ -5,3 +5,4 @@ export const selectSelectedElements = (state: RootState) =>
   state.elements.selected;
 export const selectSampleWeight = (state: RootState) =>
   state.elements.sampleWeight;
+export const selectResults = (state: RootState) => state.elements.results;

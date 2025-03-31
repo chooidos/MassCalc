@@ -63,9 +63,9 @@ const ElementsForm = () => {
         },
       });
 
-      console.log('Calculation result:', result);
+      dispatch(actions.updateResults(result));
     } catch (error) {
-      console.error('Error in calculation:', error);
+      dispatch(actions.updateError(`Error in calculation ${error}`));
     }
   };
 

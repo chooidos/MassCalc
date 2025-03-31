@@ -8,25 +8,32 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { useSelector } from 'react-redux';
+
+import { selectors } from '../../modules/elements/store';
 
 const ResultingTable = () => {
+  const results = useSelector(selectors.selectResults);
+
   return (
-    <Container>
+    <Container sx={{ mb: 2 }}>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
+              <TableCell>Element</TableCell>
+              <TableCell>Mass</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
+            {results?.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell>{row.element}</TableCell>
+                <TableCell>{row.mass}</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

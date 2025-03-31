@@ -7,6 +7,10 @@ export type ElementsState = {
   list: ElementCh[];
   selected: SelectedElement[];
   sampleWeight?: string;
+  results?: {
+    element: string;
+    mass: number;
+  }[];
   error?: string | undefined;
 };
 
@@ -43,6 +47,12 @@ export const elementsSlice = createSlice({
     },
     deb: (state) => {
       console.log(current(state));
+    },
+    updateResults: (state, action) => {
+      state.results = action.payload;
+    },
+    updateError: (state, action) => {
+      state.error = action.payload;
     },
   },
   extraReducers(builder) {
