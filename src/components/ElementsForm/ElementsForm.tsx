@@ -1,5 +1,5 @@
 import { Button, Grid2, TextField, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { actions, selectors } from '../../modules/elements/store';
@@ -12,10 +12,6 @@ const ElementsForm = () => {
   const elementsList = useSelector(selectors.selectElements);
   const selectedElements = useSelector(selectors.selectSelectedElements);
   const sampleWeight = useSelector(selectors.selectSampleWeight);
-
-  useEffect(() => {
-    dispatch(actions.deb());
-  }, [selectedElements]);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -48,6 +44,31 @@ const ElementsForm = () => {
   ) => {
     dispatch(actions.updateSampleWeight(event.target.value));
   };
+
+  const sendDataToCalculate = async () => {
+    console.log(selectedElements.filter((el) => el.symbol));
+
+    const filteredElements = selectedElements.filter((el) => el.symbol);
+
+    try {
+      const result = await invoke<
+        {
+          element: string;
+          mass: number;
+        }[]
+      >('calculate', {
+        input: {
+          elements: filteredElements,
+          sample_weight: sampleWeight,
+        },
+      });
+
+      console.log('Calculation result:', result);
+    } catch (error) {
+      console.error('Error in calculation:', error);
+    }
+  };
+
   return (
     <>
       <InputRow
@@ -94,7 +115,11 @@ const ElementsForm = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Button variant="contained" size="large">
+          <Button
+            variant="contained"
+            size="large"
+            onClick={sendDataToCalculate}
+          >
             Calculate
           </Button>
         </Grid2>

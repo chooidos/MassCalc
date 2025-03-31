@@ -20,6 +20,25 @@ struct Element {
     atomic_mass: f64,
 }
 
+#[derive(Deserialize)]
+struct RawElement {
+    symbol: String,
+    atomic_mass: serde_json::Value,
+    number: serde_json::Value,
+}
+
+#[derive(Deserialize)]
+struct CalculationInput {
+    elements: Vec<RawElement>,
+    sample_weight: serde_json::Value,
+}
+
+#[derive(Debug, Serialize)]
+struct CalculationResult {
+    element: String,
+    mass: f64,
+}
+
 fn get_json_path() -> PathBuf {
     let base_path = std::env::current_dir().expect("Cannot get current dir");
     base_path.join("elements.json")
@@ -88,13 +107,55 @@ async fn get_elements() -> Result<Vec<Element>, String> {
     Ok(elements)
 }
 
+fn parse_f64(value: &serde_json::Value) -> f64 {
+    if let Some(n) = value.as_f64() {
+        n
+    } else if let Some(s) = value.as_str() {
+        s.parse::<f64>().unwrap_or(0.0)
+    } else {
+        0.0
+    }
+}
+
+#[command]
+fn calculate(input: CalculationInput) -> Vec<CalculationResult> {
+    let sample_weight = parse_f64(&input.sample_weight);
+
+    let elements: Vec<(String, f64, f64)> = input
+        .elements
+        .iter()
+        .map(|el| {
+            let atomic_mass = parse_f64(&el.atomic_mass);
+            let number = parse_f64(&el.number);
+            (el.symbol.clone(), atomic_mass, number)
+        })
+        .collect();
+
+    let total_mass: f64 = elements
+        .iter()
+        .map(|(_, atomic_mass, number)| atomic_mass * *number as f64)
+        .sum();
+
+    if total_mass == 0.0 || sample_weight == 0.0 {
+        return vec![];
+    }
+
+    elements
+        .iter()
+        .map(|(symbol, atomic_mass, number)| CalculationResult {
+            element: symbol.clone(),
+            mass: (atomic_mass * *number as f64 / total_mass) * sample_weight,
+        })
+        .collect()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_elements])
+        .invoke_handler(tauri::generate_handler![get_elements, calculate])
         .setup(|app| {
             // Use the Manager trait to access the window by its label
             if let Some(window) = app.get_webview_window("main") {
