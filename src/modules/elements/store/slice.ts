@@ -8,9 +8,13 @@ export type ElementsState = {
   selected: SelectedElement[];
   sampleWeight?: string;
   results?: {
-    element: string;
-    mass: number;
-  }[];
+    elements: {
+      element: string;
+      mass: number;
+    }[];
+    molar_mass?: number;
+    c_p?: number;
+  };
   error?: string | undefined;
 };
 

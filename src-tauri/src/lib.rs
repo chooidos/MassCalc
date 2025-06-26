@@ -8,6 +8,8 @@ use tauri::command;
 use tauri::{LogicalSize, Manager, Size, WindowEvent};
 use tauri_plugin_http::reqwest;
 
+mod export_pdf;
+
 #[derive(Serialize, Deserialize, Debug)]
 struct ApiResponse {
     data: Vec<Element>,
@@ -34,9 +36,16 @@ struct CalculationInput {
 }
 
 #[derive(Debug, Serialize)]
-struct CalculationResult {
+struct CalculationResultItem {
     element: String,
     mass: f64,
+}
+
+#[derive(Debug, Serialize)]
+struct CalculationOutput {
+    elements: Vec<CalculationResultItem>,
+    molar_mass: f64,
+    c_p: f64,
 }
 
 fn get_json_path() -> PathBuf {
@@ -122,7 +131,7 @@ fn round5(value: f64) -> f64 {
 }
 
 #[command]
-fn calculate(input: CalculationInput) -> Vec<CalculationResult> {
+fn calculate(input: CalculationInput) -> CalculationOutput {
     let sample_weight = parse_f64(&input.sample_weight);
 
     let elements: Vec<(String, f64, f64)> = input
@@ -135,22 +144,35 @@ fn calculate(input: CalculationInput) -> Vec<CalculationResult> {
         })
         .collect();
 
-    let total_mass: f64 = elements
+    let molar_mass: f64 = elements
         .iter()
         .map(|(_, atomic_mass, number)| atomic_mass * *number as f64)
         .sum();
 
-    if total_mass == 0.0 || sample_weight == 0.0 {
-        return vec![];
+    let total_atoms: f64 = elements.iter().map(|(_, _, n)| *n).sum();
+    let c_p: f64 = total_atoms * 3.0 * 8.314 / molar_mass;
+
+    if molar_mass == 0.0 || sample_weight == 0.0 {
+        return CalculationOutput {
+            elements: vec![],
+            molar_mass: 0.0,
+            c_p: 0.0,
+        };
     }
 
-    elements
+    let results = elements
         .iter()
-        .map(|(symbol, atomic_mass, number)| CalculationResult {
+        .map(|(symbol, atomic_mass, number)| CalculationResultItem {
             element: symbol.clone(),
-            mass: round5((atomic_mass * *number as f64 / total_mass) * sample_weight),
+            mass: round5((atomic_mass * *number as f64 / molar_mass) * sample_weight),
         })
-        .collect()
+        .collect();
+
+    CalculationOutput {
+        elements: results,
+        c_p: round5(c_p),
+        molar_mass: round5(molar_mass),
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -158,8 +180,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_fs::init())
-        .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_elements, calculate])
+        .invoke_handler(tauri::generate_handler![
+            get_elements,
+            calculate,
+            export_pdf::export_to_pdf,
+        ])
         .setup(|app| {
             // Use the Manager trait to access the window by its label
             if let Some(window) = app.get_webview_window("main") {

@@ -31,6 +31,7 @@ const InputRow: FC<InputRowProps> = ({ label, values, type, onChange }) => {
             autoComplete="false"
             variant="outlined"
             size="small"
+            slotProps={{ htmlInput: { sx: { padding: '5px' } } }}
             value={values[el.idx - 1]?.[type] || ''}
             onChange={(event) => onChange(event, el.idx)}
           />

@@ -46,8 +46,6 @@ const ElementsForm = () => {
   };
 
   const sendDataToCalculate = async () => {
-    console.log(selectedElements.filter((el) => el.symbol));
-
     const filteredElements = selectedElements.filter((el) => el.symbol);
 
     try {
@@ -104,6 +102,7 @@ const ElementsForm = () => {
             autoComplete="false"
             variant="outlined"
             size="small"
+            slotProps={{ htmlInput: { sx: { padding: '5px' } } }}
             value={sampleWeight}
             onChange={handleSampleWeightInput}
           />
