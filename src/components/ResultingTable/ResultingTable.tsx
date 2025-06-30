@@ -27,34 +27,38 @@ const ResultingTable = () => {
   };
 
   return (
-    <Container>
-      <Button variant="contained" size="large" onClick={savePDF}>
-        Save PDF
-      </Button>
-      <Container
-        sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}
-      >
-        <TableContainer component={Paper} sx={{ width: '50%' }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Element</TableCell>
-                <TableCell>Mass</TableCell>
+    <Container
+      sx={{
+        mb: 2,
+        display: 'flex',
+        justifyContent: 'space-between',
+        position: 'relative',
+        minHeight: '20vh',
+        maxHeight: '315px',
+      }}
+    >
+      <TableContainer component={Paper} sx={{ width: '50%' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Element</TableCell>
+              <TableCell>Mass</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {results?.elements?.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell>{row.element}</TableCell>
+                <TableCell>{row.mass}</TableCell>
                 <TableCell></TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {results?.elements?.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>{row.element}</TableCell>
-                  <TableCell>{row.mass}</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TableContainer component={Paper} sx={{ width: '45%' }}>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <div style={{ position: 'relative', width: '30%' }}>
+        <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -63,14 +67,31 @@ const ResultingTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>{results?.molar_mass}</TableCell>
-                <TableCell>{results?.c_p}</TableCell>
-              </TableRow>
+              {(results?.molar_mass ?? 0) > 0 && (
+                <TableRow>
+                  <TableCell>{results?.molar_mass}</TableCell>
+                  <TableCell>{results?.c_p}</TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
-      </Container>
+      </div>
+      {(results?.elements?.length ?? 0) > 0 && (
+        <Button
+          variant="contained"
+          size="large"
+          sx={{
+            p: '5px',
+            position: 'absolute',
+            bottom: '0px',
+            right: '24px',
+          }}
+          onClick={savePDF}
+        >
+          Save PDF
+        </Button>
+      )}
     </Container>
   );
 };

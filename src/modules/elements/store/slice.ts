@@ -12,8 +12,8 @@ export type ElementsState = {
       element: string;
       mass: number;
     }[];
-    molar_mass?: number;
-    c_p?: number;
+    molar_mass: number;
+    c_p: number;
   };
   error?: string | undefined;
 };

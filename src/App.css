@@ -1,0 +1,7 @@
+:root {
+  overscroll-behavior: none;
+}
+
+body {
+  overflow: hidden !important;
+}

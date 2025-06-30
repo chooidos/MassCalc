@@ -15,7 +15,7 @@ interface InputRowProps {
 
 const InputRow: FC<InputRowProps> = ({ label, values, type, onChange }) => {
   return (
-    <Grid2 container spacing={2} padding={2}>
+    <Grid2 container spacing={2} paddingBlockStart={2} paddingBlockEnd={2}>
       <Grid2
         size={2}
         display="flex"

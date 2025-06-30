@@ -1,4 +1,4 @@
-import { Button, Grid2, TextField, Typography } from '@mui/material';
+import { Button, Container, Grid2, TextField, Typography } from '@mui/material';
 import { invoke } from '@tauri-apps/api/core';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -68,7 +68,7 @@ const ElementsForm = () => {
   };
 
   return (
-    <>
+    <Container>
       <InputRow
         label="Elements"
         values={selectedElements}
@@ -87,7 +87,7 @@ const ElementsForm = () => {
         type={'atomic_mass'}
         onChange={(event, idx) => handleInputChange(event, idx, 'atomic_mass')}
       />
-      <Grid2 container spacing={2} padding={2}>
+      <Grid2 container spacing={2} paddingBlockStart={2} paddingBlockEnd={2}>
         <Grid2
           size={2}
           display="flex"
@@ -108,22 +108,18 @@ const ElementsForm = () => {
           />
         </Grid2>
         <Grid2 size={6} />
-        <Grid2
-          size={2}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
+        <Grid2 size={2} display="flex" justifyContent="right">
           <Button
             variant="contained"
-            size="large"
             onClick={sendDataToCalculate}
+            size="large"
+            sx={{ p: '5px' }}
           >
             Calculate
           </Button>
         </Grid2>
       </Grid2>
-    </>
+    </Container>
   );
 };
 
