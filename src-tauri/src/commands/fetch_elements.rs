@@ -1,3 +1,4 @@
+use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
@@ -17,9 +18,13 @@ struct ApiResponse {
 }
 
 fn get_json_path() -> PathBuf {
-    std::env::current_dir()
-        .expect("Cannot get current dir")
-        .join("elements.json")
+    let proj_dirs =
+        ProjectDirs::from("com", "chooinet", "MassCalc").expect("Cannot get project directories");
+    let data_dir = proj_dirs.data_local_dir(); // Windows: %APPDATA%/MyApp, macOS: ~/Library/Application Support/MyApp, Linux: ~/.local/share/MyApp
+
+    fs::create_dir_all(data_dir).expect("Cannot create data directory");
+
+    data_dir.join("elements.json")
 }
 
 async fn fetch_elements_from_api() -> Result<Vec<Element>, String> {
@@ -30,7 +35,10 @@ async fn fetch_elements_from_api() -> Result<Vec<Element>, String> {
         .map_err(|e| e.to_string())?;
 
     let mut headers = HeaderMap::new();
-    headers.insert("x-rapidapi-key", HeaderValue::from_static("YOUR_KEY_HERE"));
+    headers.insert(
+        "x-rapidapi-key",
+        HeaderValue::from_static("f402b45c49msh60e767cbb413625p1d5f11jsn59599dff491d"),
+    );
     headers.insert(
         "x-rapidapi-host",
         HeaderValue::from_static("periodic-table-api.p.rapidapi.com"),
